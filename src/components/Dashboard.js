@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import DrdpAssessment from './DrdpAssessment';
 import DrdpDataVisualization from './DrdpDataVisualization';
+import { Nav, Button } from 'react-bootstrap';
 
 // Mock database service - in a real app, this would connect to your actual database
 const dbService = {
@@ -240,18 +241,14 @@ function Dashboard() {
                 <span className="text-white text-lg font-medium">DRDP Teacher Portal</span>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                <a href="#" className="border-indigo-500 text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                  Dashboard
-                </a>
-                <a href="#" className="border-transparent text-indigo-200 hover:text-white hover:border-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                  Assessments
-                </a>
-                <a href="#" className="border-transparent text-indigo-200 hover:text-white hover:border-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                  Students
-                </a>
-                <a href="#" className="border-transparent text-indigo-200 hover:text-white hover:border-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                  Reports
-                </a>
+                <Nav className="ml-auto">
+                  <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+                  <Nav.Link href="/drdp-domains">DRDP Domains</Nav.Link>
+                  <Nav.Link href="/essential-skills">Essential Skills</Nav.Link>
+                  {userRole === 'admin' && <Nav.Link href="/admin">Admin</Nav.Link>}
+                  {userRole === 'teacher' && <Nav.Link href="/classroom">Classroom</Nav.Link>}
+                  <Button variant="outline-light" onClick={handleLogout}>Logout</Button>
+                </Nav>
               </div>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center">

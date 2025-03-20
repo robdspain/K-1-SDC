@@ -1,11 +1,10 @@
 [build]
   command = "npm run build"
   publish = ".next"
+  environment = { NODE_VERSION = "18", NPM_VERSION = "10", NEXT_PUBLIC_SUPABASE_URL = "your-supabase-url" }
 
 [build.environment]
-  NEXT_PUBLIC_SUPABASE_URL = "https://npyrumupbledqaiahvso.supabase.co"
-  NODE_VERSION = "20.11.1"
-  NPM_VERSION = "10.2.4"
+  NEXT_TELEMETRY_DISABLED = "1"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
