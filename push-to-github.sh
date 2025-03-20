@@ -18,13 +18,15 @@ fi
 GITHUB_USERNAME="robdspain"
 
 # Repository name
-REPO_NAME="conversation-app-docker"
+REPO_NAME="K1-SDC"
 
 # Create a new repository if it does not exist already
 echo "Creating GitHub repository if it does not exist..."
-curl -H "Authorization: token $GITHUB_TOKEN" \
-     -d "{\"name\":\"$REPO_NAME\",\"description\":\"A responsive conversation web application built with React.js and Node.js, containerized with Docker\",\"private\":false}" \
-     https://api.github.com/user/repos
+curl -H "Authorization: Bearer $GITHUB_TOKEN" \
+     -H "Accept: application/vnd.github+json" \
+     -H "X-GitHub-Api-Version: 2022-11-28" \
+     https://api.github.com/user/repos \
+     -d "{\"name\":\"$REPO_NAME\",\"description\":\"A responsive web application for managing conversations, built with React.js and Node.js, with Docker containerization.\"}"
 
 # Set up git configuration
 git config user.name "Rob Spain"
@@ -41,12 +43,9 @@ git add .
 # Commit changes
 git commit -m "Dockerized conversation app"
 
-# Add GitHub as remote with token authentication
-git remote rm origin 2>/dev/null || true
-git remote add origin https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/$GITHUB_USERNAME/$REPO_NAME.git
-
 # Push to GitHub
 echo "Pushing to GitHub..."
+git remote add origin "https://robdspain:$GITHUB_TOKEN@github.com/robdspain/$REPO_NAME.git" || git remote set-url origin "https://robdspain:$GITHUB_TOKEN@github.com/robdspain/$REPO_NAME.git"
 git push -u origin main || git push -u origin master
 
 echo "Done!" 
