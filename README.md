@@ -211,66 +211,34 @@ The checklist uses role-based access control:
 - Users with `role = 'admin'` in the profiles table can edit the checklist
 - All other users can only view the read-only version 
 
-## Auth0 Integration
+## Auth0 Integration Update
 
-The application now supports Auth0 for authentication. Here's how to set it up:
+To enable Auth0 authentication:
 
-### Auth0 Setup
+1. Set up an Auth0 account and application:
+   - Create an Auth0 account at [https://auth0.com](https://auth0.com)
+   - Create a new Regular Web Application in the Auth0 dashboard
+   - Configure the following URLs:
+     - Allowed Callback URLs: `http://localhost:3000/api/auth/callback`
+     - Allowed Logout URLs: `http://localhost:3000`
 
-1. Create an Auth0 account at [https://auth0.com](https://auth0.com) if you don't have one
-2. Create a new application in the Auth0 dashboard
-3. Configure your application with the following settings:
-   - Application Type: Regular Web Application
-   - Allowed Callback URLs: `http://localhost:3000/api/auth/callback`
-   - Allowed Logout URLs: `http://localhost:3000`
-   - Allowed Web Origins: `http://localhost:3000`
-
-### Environment Variables
-
-Set up your environment variables in `.env.local`:
-
-```
-# Auth0 Configuration
-AUTH0_SECRET='use [openssl rand -hex 32] to generate a 32 bytes value'
-AUTH0_BASE_URL='http://localhost:3000'
-AUTH0_ISSUER_BASE_URL='https://YOUR_AUTH0_DOMAIN'
-AUTH0_CLIENT_ID='YOUR_AUTH0_CLIENT_ID'
-AUTH0_CLIENT_SECRET='YOUR_AUTH0_CLIENT_SECRET'
-AUTH0_SCOPE='openid profile email'
-```
-
-### Adding Admin Roles in Auth0
-
-To assign admin roles to users:
-
-1. Go to the Auth0 dashboard
-2. Navigate to "User Management" > "Users"
-3. Select a user
-4. Go to the "Roles" tab
-5. Assign the "admin" role (create it first if it doesn't exist)
-
-Alternatively, you can add custom app metadata to user profiles:
-
-1. Go to the user's profile
-2. Add app metadata:
-   ```json
-   {
-     "role": "admin"
-   }
+2. Update your `.env.local` file with your Auth0 credentials:
+   ```
+   # Auth0 Configuration
+   AUTH0_SECRET='use [openssl rand -hex 32] to generate a 32 bytes value'
+   AUTH0_BASE_URL='http://localhost:3000'
+   AUTH0_ISSUER_BASE_URL='https://YOUR_AUTH0_DOMAIN'
+   AUTH0_CLIENT_ID='YOUR_AUTH0_CLIENT_ID'
+   AUTH0_CLIENT_SECRET='YOUR_AUTH0_CLIENT_SECRET'
+   AUTH0_SCOPE='openid profile email'
+   
+   # Set to true to enable Auth0 (false uses mock authentication)
+   NEXT_PUBLIC_USE_AUTH0=true
    ```
 
-### Authentication Flow
+3. Restart the application to apply the changes.
 
-1. Users are redirected to Auth0 login page when accessing protected routes
-2. After successful authentication, they are redirected back to the application
-3. Admin-only features like the editable feature checklist are restricted based on user roles
-
-### Migration from Supabase Auth
-
-The application supports both Auth0 and Supabase authentication during migration:
-
-1. Both authentication systems can be used simultaneously
-2. The FeatureChecklistAdmin component checks for admin roles in both systems 
+The application now supports both Auth0 authentication and mock authentication for demonstration purposes. The login page provides both options.
 
 # TK-1-SDC Assessment Project
 

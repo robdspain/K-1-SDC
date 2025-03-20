@@ -231,6 +231,26 @@ function Dashboard() {
     return ['LLD', 'COG'].includes(domainId);
   };
 
+  // Update the handleLogout function
+  const handleLogout = () => {
+    // Clear local storage auth data (for mock auth)
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userId');
+
+    // Check if using Auth0
+    const useAuth0 = process.env.NEXT_PUBLIC_USE_AUTH0 === 'true';
+
+    if (useAuth0) {
+      // Redirect to Auth0 logout
+      window.location.href = '/api/auth/logout';
+    } else {
+      // Redirect to home for mock auth
+      window.location.href = '/';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-indigo-600 shadow-sm">
