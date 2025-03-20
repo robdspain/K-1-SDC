@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # GitHub token
-GITHUB_TOKEN="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"
+GITHUB_TOKEN="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"
 
 # Repository info
 REPO_NAME="K-1-SDC"
