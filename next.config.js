@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    output: 'export', // For Netlify static hosting
+    // Remove static export to allow for dynamic rendering
+    // output: 'export', // For Netlify static hosting
     images: {
         unoptimized: true, // For Netlify static deployment
     },
