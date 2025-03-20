@@ -1,85 +1,90 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
-import { type CookieOptions } from '@supabase/ssr'
+import { NextResponse, NextRequest } from 'next/server';
+import { getSession, withMiddlewareAuthRequired } from '@auth0/nextjs-auth0/edge';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
-interface CookieSetOptions {
-  name: string;
-  value: string;
-  options?: CookieOptions;
-}
+// This middleware protects routes that require authentication
+export default withMiddlewareAuthRequired({
+  returnTo: (req) => req.url,
+  middleware: async (req: NextRequest) => {
+    try {
+      const res = NextResponse.next();
 
-export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
+      // Get Auth0 session
+      const session = await getSession(req, res);
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet: CookieSetOptions[]) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
-      },
+      // If user is logged in with Auth0, check/sync with Supabase
+      if (session?.user) {
+        // Create Supabase client
+        const supabase = createServerClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          {
+            cookies: {
+              getAll: () => {
+                const cookieStore = cookies();
+                return Array.from(cookieStore.getAll()).map(cookie => ({
+                  name: cookie.name,
+                  value: cookie.value,
+                }));
+              },
+              setAll: (cookies) => {
+                cookies.forEach(cookie => {
+                  res.cookies.set(cookie.name, cookie.value, cookie.options);
+                });
+              },
+            },
+          }
+        );
+
+        // Sync Auth0 user with Supabase
+        const { data: existingUser } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('email', session.user.email)
+          .single();
+
+        // If user doesn't exist in Supabase or needs to be updated
+        if (!existingUser) {
+          // Get role from Auth0 user
+          let role = 'user';
+
+          // Check if user has roles assigned via Auth0 permissions
+          if (session.user[`${process.env.AUTH0_ISSUER_BASE_URL}/roles`]) {
+            const roles = session.user[`${process.env.AUTH0_ISSUER_BASE_URL}/roles`];
+            if (Array.isArray(roles) && roles.includes('admin')) {
+              role = 'admin';
+            }
+          }
+
+          // Create or update profile in Supabase
+          await supabase.from('profiles').upsert({
+            id: session.user.sub,
+            email: session.user.email,
+            name: session.user.name,
+            role: role,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+        }
+      }
+
+      return res;
+    } catch (error) {
+      console.error('Middleware error:', error);
+      return NextResponse.next();
     }
-  )
-
-  // Do not run code between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
   }
+});
 
-  // IMPORTANT: You *must* return the supabaseResponse object as it is.
-  // If you're creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so:
-  // const myNewResponse = NextResponse.next({ request })
-  // 2. Copy over the cookies, like so:
-  // myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-  // 3. Change the myNewResponse object to fit your needs, but avoid changing
-  // the cookies!
-  // 4. Finally:
-  // return myNewResponse
-  // If this is not done, you may be causing the browser and server to go out
-  // of sync and terminate the user's session prematurely!
-
-  return supabaseResponse
-}
-
+// Only run on specific paths that require authentication
 export const config = {
   matcher: [
-    /*
-    * Match all request paths except for the ones starting with:
-    * - _next/static (static files)
-    * - _next/image (image optimization files)
-    * - favicon.ico (favicon file)
-    * Feel free to modify this pattern to include more paths.
-    */
-    '/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/profile',
+    '/dashboard/:path*',
+    '/assessments/:path*',
+    '/students/:path*',
+    '/settings',
+    '/admin/:path*'
   ],
-} 
+}; 

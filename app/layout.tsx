@@ -1,10 +1,12 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import React from 'react';
+import Navigation from './navigation';
+import Providers from './providers';
 
 export const metadata: Metadata = {
-  title: 'Next.js with Supabase Auth',
-  description: 'Example of using Supabase Auth with Next.js',
+  title: 'DRDP Assessment Tool',
+  description: 'A tool for managing DRDP assessments',
 };
 
 export default function RootLayout({
@@ -15,7 +17,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <Providers>
+          <Navigation />
+          <main className="container mx-auto py-4">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

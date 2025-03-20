@@ -179,4 +179,208 @@ The project uses the recommended modern approach with `@supabase/ssr` package:
 
 - [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
 - [Next.js Documentation](https://nextjs.org/docs)
-- [Supabase SSR Package](https://github.com/supabase/auth-helpers) 
+- [Supabase SSR Package](https://github.com/supabase/auth-helpers)
+
+## Feature Checklist
+
+The application includes an editable DRDP Feature Implementation Checklist that allows administrators to:
+
+- View the status of all DRDP features
+- Mark features as "yes", "no", or "planned for future"
+- Add new features to the checklist
+- Update feature descriptions and notes
+- Delete features when necessary
+
+### Accessing the Feature Checklist
+
+1. **Admin View**: Administrators can access the editable checklist at `/dashboard/features`
+2. **Read-Only View**: Regular users can see a read-only version of the checklist at the same URL
+
+### Database Setup
+
+To set up the features table in your Supabase database:
+
+1. Navigate to the SQL Editor in your Supabase dashboard
+2. Run the SQL commands found in `migration.sql` in this repository
+
+This will create the necessary tables and policies for the feature checklist to work properly.
+
+### Role-Based Access
+
+The checklist uses role-based access control:
+- Users with `role = 'admin'` in the profiles table can edit the checklist
+- All other users can only view the read-only version 
+
+## Auth0 Integration
+
+The application now supports Auth0 for authentication. Here's how to set it up:
+
+### Auth0 Setup
+
+1. Create an Auth0 account at [https://auth0.com](https://auth0.com) if you don't have one
+2. Create a new application in the Auth0 dashboard
+3. Configure your application with the following settings:
+   - Application Type: Regular Web Application
+   - Allowed Callback URLs: `http://localhost:3000/api/auth/callback`
+   - Allowed Logout URLs: `http://localhost:3000`
+   - Allowed Web Origins: `http://localhost:3000`
+
+### Environment Variables
+
+Set up your environment variables in `.env.local`:
+
+```
+# Auth0 Configuration
+AUTH0_SECRET='use [openssl rand -hex 32] to generate a 32 bytes value'
+AUTH0_BASE_URL='http://localhost:3000'
+AUTH0_ISSUER_BASE_URL='https://YOUR_AUTH0_DOMAIN'
+AUTH0_CLIENT_ID='YOUR_AUTH0_CLIENT_ID'
+AUTH0_CLIENT_SECRET='YOUR_AUTH0_CLIENT_SECRET'
+AUTH0_SCOPE='openid profile email'
+```
+
+### Adding Admin Roles in Auth0
+
+To assign admin roles to users:
+
+1. Go to the Auth0 dashboard
+2. Navigate to "User Management" > "Users"
+3. Select a user
+4. Go to the "Roles" tab
+5. Assign the "admin" role (create it first if it doesn't exist)
+
+Alternatively, you can add custom app metadata to user profiles:
+
+1. Go to the user's profile
+2. Add app metadata:
+   ```json
+   {
+     "role": "admin"
+   }
+   ```
+
+### Authentication Flow
+
+1. Users are redirected to Auth0 login page when accessing protected routes
+2. After successful authentication, they are redirected back to the application
+3. Admin-only features like the editable feature checklist are restricted based on user roles
+
+### Migration from Supabase Auth
+
+The application supports both Auth0 and Supabase authentication during migration:
+
+1. Both authentication systems can be used simultaneously
+2. The FeatureChecklistAdmin component checks for admin roles in both systems 
+
+# TK-1-SDC Assessment Project
+
+A Next.js application for managing student DRDP assessments with integrated Auth0 authentication and Supabase database.
+
+## Features
+
+- User authentication via Auth0
+- Role-based access control (users and admins)
+- Feature checklist management (admin only)
+- Student assessment management
+- DRDP assessment creation and tracking
+- Profile management
+
+## Tech Stack
+
+- Next.js 13+ (App Router)
+- TypeScript
+- Auth0 for authentication
+- Supabase for database
+- Tailwind CSS for styling
+
+## Authentication Flow
+
+This application uses Auth0 as the primary authentication provider while maintaining compatibility with Supabase for database storage. The integration allows for:
+
+1. **User Authentication**: Login/signup via Auth0
+2. **Profile Synchronization**: Auth0 user data is automatically synced to Supabase profiles
+3. **Role-Based Access**: Admin roles are supported and checked via middleware
+4. **Protected Routes**: Certain routes are protected based on authentication status and roles
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js 16+
+- npm or yarn
+- Supabase account and project
+- Auth0 account and application
+
+### Environment Variables
+
+Create a `.env.local` file with the following variables:
+
+```
+# Auth0 Configuration
+AUTH0_SECRET='your-auth0-secret'
+AUTH0_BASE_URL='http://localhost:3000'
+AUTH0_ISSUER_BASE_URL='https://your-tenant.auth0.com'
+AUTH0_CLIENT_ID='your-auth0-client-id'
+AUTH0_CLIENT_SECRET='your-auth0-client-secret'
+
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL='your-supabase-url'
+NEXT_PUBLIC_SUPABASE_ANON_KEY='your-supabase-anon-key'
+```
+
+### Database Setup
+
+The database schema is defined in the `db/schema.sql` file. You can run these SQL statements in the Supabase SQL editor to set up the required tables.
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+## Auth0 Configuration
+
+### Required Rules/Actions
+
+To properly set up Auth0, you need to configure:
+
+1. **Application**: Create a Regular Web Application in Auth0
+2. **Allowed Callback URLs**: Set to `http://localhost:3000/api/auth/callback` for development
+3. **Allowed Logout URLs**: Set to `http://localhost:3000` for development
+4. **Roles (optional)**: Create an 'admin' role in Auth0 if you want to assign it to users
+
+### Auth0-Supabase Integration
+
+The application synchronizes Auth0 user data with Supabase profiles in these ways:
+
+1. **Middleware**: Auth0 session data is checked and synced to Supabase on protected routes
+2. **Profile Page**: User data is loaded from both Auth0 and Supabase
+3. **Admin Features**: Admin check is performed using both Auth0 roles and Supabase profile data
+
+## Development
+
+### Type Checking
+
+```bash
+npm run type-check
+# or
+yarn type-check
+```
+
+### Linting
+
+```bash
+npm run lint
+# or
+yarn lint
+``` 
