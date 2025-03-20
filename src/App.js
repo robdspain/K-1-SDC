@@ -4,7 +4,6 @@ import './App.css';
 import Home from './components/Home';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-import FeatureChecklist from './components/FeatureChecklist';
 import DrdpDomains from './components/DrdpDomains';
 import AdminDashboard from './components/AdminDashboard';
 import TeacherClassroom from './components/TeacherClassroom';
@@ -22,10 +21,6 @@ function App() {
         <Route
           path="/dashboard"
           element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/features"
-          element={<FeatureChecklist />}
         />
         <Route
           path="/drdp-domains"

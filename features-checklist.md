@@ -62,7 +62,6 @@
 - [x] Basic navigation between assessment views
 - [ ] React Router setup
 - [ ] Protected routes for authenticated users
-- [ ] Dynamic routing for conversations
 
 ## Code Quality
 - [x] ESLint configuration
