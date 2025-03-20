@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "k-1-sdc-assessment-server",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
@@ -20,4 +20,4 @@
   "devDependencies": {
     "nodemon": "^2.0.22"
   }
-} 
+}

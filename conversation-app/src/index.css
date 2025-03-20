@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,4 +14,99 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* DRDP-specific custom styles */
+.drdp-measure-card {
+  transition: all 0.3s ease;
+}
+
+.drdp-measure-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.domain-ATL-REG {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.domain-SED {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.domain-LLD {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.domain-COG, .domain-COG-MATH, .domain-COG-SCI {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+
+.domain-PD-HLTH {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.domain-HSS {
+  background-color: #f5f3ff;
+  color: #6d28d9;
+}
+
+.domain-VPA {
+  background-color: #fce7f3;
+  color: #be185d;
+}
+
+/* Progress indicator styles */
+.progress-indicator {
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease;
+}
+
+/* Radar chart styles */
+.radar-chart-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+
+.radar-chart-axis {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+/* Print styles for reports */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+  }
+  
+  .print-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .page-break {
+    page-break-before: always;
+  }
 } 

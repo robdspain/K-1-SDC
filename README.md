@@ -1,4 +1,4 @@
-# Conversation App
+# K-1 SDC Assessment
 
 A responsive web application for managing conversations, built with React.js and Node.js.
 
@@ -114,3 +114,69 @@ A responsive web application for managing conversations, built with React.js and
 
 ## License
 MIT 
+
+# Next.js with Supabase Auth SSR
+
+This project demonstrates how to implement Supabase Authentication with Server-Side Rendering (SSR) in a Next.js application.
+
+## Project Setup
+
+1. Install dependencies:
+```bash
+npm install
+# or
+yarn
+# or
+pnpm install
+```
+
+2. Set up environment variables:
+- Copy `.env.local.example` to `.env.local`
+- Add your Supabase URL and anon key (can be found in your Supabase dashboard)
+
+3. Run the development server:
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+## Implementation Details
+
+The project uses the recommended modern approach with `@supabase/ssr` package:
+
+### Server Client
+- Created using `createServerClient` from `@supabase/ssr`
+- Handles cookie management properly using the `getAll` and `setAll` methods
+- Located in `utils/supabase-server.ts`
+
+### Browser Client
+- Created using `createBrowserClient` from `@supabase/ssr`
+- Simplifies client-side Supabase interactions
+- Located in `utils/supabase-browser.ts`
+
+### Authentication Middleware
+- Ensures user sessions are refreshed
+- Handles protected routes by redirecting unauthenticated users
+- Located in `middleware.ts`
+
+## Important Notes
+
+1. This project follows the latest Supabase recommendations for Next.js integration
+2. It uses the proper cookie handling methods to prevent session issues
+3. The middleware is critical for maintaining authentication state
+
+## Authentication Flow
+
+1. User signs in via the login page
+2. Middleware refreshes session on each request
+3. Protected routes check for authenticated user
+4. Unauthenticated users are redirected to login
+
+## Learn More
+
+- [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Supabase SSR Package](https://github.com/supabase/auth-helpers) 

@@ -1,10 +1,16 @@
 [build]
   command = "npm run build"
-  publish = "build"
+  publish = "out"
 
 [build.environment]
-  REACT_APP_API_URL = "https://your-digital-ocean-api-url.com/api"
+  NEXT_PUBLIC_SUPABASE_URL = "https://npyrumupbledqaiahvso.supabase.co"
+  NODE_VERSION = "20.11.1"
+  NPM_VERSION = "10.2.4"
 
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Needed for client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
