@@ -5,8 +5,8 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { getUserRole } from './utils/auth0';
 
-// Explicitly set the runtime to edge
-export const runtime = 'edge';
+// Explicitly set the runtime to experimental-edge
+export const runtime = 'experimental-edge';
 
 /**
  * Interface for Auth0 user profile with required fields
