@@ -16,6 +16,9 @@ const nextConfig = {
             tls: false,
             fs: false,
             stream: false, // Set stream to false to avoid using Node.js stream module in Edge runtime
+            http: false, // Set http to false to avoid using Node.js http module in Edge runtime
+            https: false, // Also handle https
+            querystring: false, // Set querystring to false to avoid using Node.js querystring module in Edge runtime
             crypto: require.resolve('crypto-browserify')
         };
 

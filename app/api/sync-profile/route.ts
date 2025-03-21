@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@auth0/nextjs-auth0/edge';
+import { getSession } from '@auth0/nextjs-auth0';
 import { syncAuth0UserToSupabase } from '@/utils/auth0-sync';
 
 // Mark as dynamic to prevent static generation (needed due to cookie usage)
 export const dynamic = 'force-dynamic';
 
-// Set the runtime to edge explicitly
-export const runtime = 'edge';
+// Set runtime to nodejs explicitly as Auth0 client requires Node.js APIs
+export const runtime = 'nodejs';
 
 /**
  * API route to sync Auth0 user profile to Supabase
@@ -15,7 +15,8 @@ export const runtime = 'edge';
 export async function GET(req: NextRequest) {
     try {
         // Get Auth0 session
-        const session = await getSession(req, NextResponse.next());
+        const res = NextResponse.next();
+        const session = await getSession(req, res);
 
         if (!session?.user) {
             return NextResponse.json(
@@ -62,7 +63,8 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         // Get Auth0 session
-        const session = await getSession(req, NextResponse.next());
+        const res = NextResponse.next();
+        const session = await getSession(req, res);
 
         if (!session?.user) {
             return NextResponse.json(
