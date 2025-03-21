@@ -5,6 +5,9 @@ import { syncAuth0UserToSupabase } from '@/utils/auth0-sync';
 // Mark as dynamic to prevent static generation (needed due to cookie usage)
 export const dynamic = 'force-dynamic';
 
+// Set the runtime to edge explicitly
+export const runtime = 'edge';
+
 /**
  * API route to sync Auth0 user profile to Supabase
  * This can be called after login or profile updates to ensure data consistency

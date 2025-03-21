@@ -15,6 +15,7 @@ const nextConfig = {
             net: false,
             tls: false,
             fs: false,
+            stream: false, // Set stream to false to avoid using Node.js stream module in Edge runtime
             crypto: require.resolve('crypto-browserify')
         };
 
