@@ -5,9 +5,6 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { getUserRole } from './utils/auth0';
 
-// Explicitly set the runtime to experimental-edge
-export const runtime = 'experimental-edge';
-
 /**
  * Interface for Auth0 user profile with required fields
  */
@@ -124,6 +121,10 @@ export default withMiddlewareAuthRequired({
       return res;
     } catch (error) {
       console.error('Middleware error:', error instanceof Error ? error.message : 'Unknown error');
+      // Return a redirect to the home page instead of silently continuing
+      if (error instanceof Error && error.message.includes('auth')) {
+        return NextResponse.redirect(new URL('/', req.url));
+      }
       return NextResponse.next();
     }
   }

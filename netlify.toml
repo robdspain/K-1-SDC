@@ -17,8 +17,14 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
-# Handle client-side routing
+# Handle Next.js API and paths
+[[redirects]]
+  from = "/_next/static/*"
+  to = "/_next/static/:splat"
+  status = 200
+
+# Handle all other routes
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/.netlify/functions/nextjs-server"
   status = 200 

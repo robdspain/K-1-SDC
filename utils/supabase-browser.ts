@@ -120,22 +120,28 @@ function createMockClient() {
  * @returns A Supabase client or a mock client if configuration is missing
  */
 export function createClient(): SupabaseClient {
+  // Use window to ensure this only runs on the client side
+  const isBrowser = typeof window !== 'undefined';
+
+  // Get environment variables
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // If environment variables are missing, provide defaults or warn
-  if (!supabaseUrl || !supabaseKey) {
-    console.warn('Supabase URL or Anon Key missing. Auth functionality will be limited.');
-
-    // Return mock client if in production (build) environment
-    if (process.env.NODE_ENV === 'production') {
-      return createMockClient() as unknown as SupabaseClient;
-    }
+  // If environment variables are missing or we're in a server environment during static generation
+  if (!isBrowser || !supabaseUrl || !supabaseKey) {
+    console.warn('Supabase URL or Anon Key missing or running in server context. Auth functionality will be limited.');
+    return createMockClient() as unknown as SupabaseClient;
   }
 
-  // Create and return a real Supabase client
-  return createBrowserClient(
-    supabaseUrl || 'https://placeholder-url.supabase.co',
-    supabaseKey || 'placeholder-key'
-  );
+  // Validate URL format before creating client
+  try {
+    // Test that the URL is valid
+    new URL(supabaseUrl);
+
+    // Create and return a real Supabase client
+    return createBrowserClient(supabaseUrl, supabaseKey);
+  } catch (error) {
+    console.error('Invalid Supabase URL format:', error);
+    return createMockClient() as unknown as SupabaseClient;
+  }
 } 
