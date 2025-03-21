@@ -1,9 +1,10 @@
 [build]
   command = "CI= npm run build"
   publish = "build"
-  environment = { NODE_VERSION = "18", NPM_VERSION = "10", NEXT_PUBLIC_SUPABASE_URL = "your-supabase-url" }
 
 [build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "10"
   NEXT_TELEMETRY_DISABLED = "1"
 
 [[plugins]]
