@@ -20,7 +20,7 @@ export function createClient() {
         from: (table: string) => {
           return {
             select: (columns: string) => {
-              return {
+              const queryBuilder = {
                 eq: (column: string, value: any) => {
                   return {
                     single: async () => ({
@@ -40,8 +40,16 @@ export function createClient() {
                     data: null,
                     error: new Error('Supabase configuration missing')
                   })
+                }),
+                order: (column: string, options?: { ascending?: boolean }) => {
+                  return queryBuilder;
+                },
+                single: async () => ({
+                  data: null,
+                  error: new Error('Supabase configuration missing')
                 })
               };
+              return queryBuilder;
             },
             insert: (data: any) => ({
               select: (columns: string) => ({
