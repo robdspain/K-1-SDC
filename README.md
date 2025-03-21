@@ -6,7 +6,6 @@ A responsive web application for managing conversations, built with React.js and
 
 - Responsive design for mobile and web
 - Real-time conversation updates
-- User-friendly chat interface
 - Secure backend API
 - Docker containerization for easy deployment
 
@@ -111,6 +110,47 @@ A responsive web application for managing conversations, built with React.js and
 - Configure CORS appropriately
 - Add rate limiting to protect the API
 - When using Docker in production, configure volumes for data persistence
+
+## Authentication and Security
+
+This application uses Auth0 for secure authentication. The implementation includes:
+
+### Auth0 Integration
+
+- Client-side authentication for the React application
+- Server-side validation for protected API routes
+- Role-based access control (admin and teacher roles)
+- JWT token validation
+- Secure session management
+
+### Setup Authentication
+
+1. Create an Auth0 account at [Auth0](https://auth0.com/) if you don't have one
+2. Create a new application in the Auth0 dashboard
+3. Configure environment variables for Auth0 by copying `.env.example` to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+4. Update the variables in `.env.local` with your Auth0 credentials
+
+### Authentication Configuration
+
+For detailed Auth0 configuration instructions, see [Auth0-Configuration.md](./Auth0-Configuration.md).
+
+### Security Best Practices
+
+- **Environment Variables**: All sensitive credentials are stored in environment variables
+- **HTTPS**: Always use HTTPS in production environments
+- **Token Security**: Auth0 tokens are short-lived and securely managed
+- **CORS**: Properly configured CORS headers to prevent unauthorized access
+- **Content Security Policy**: Implemented to prevent XSS attacks
+- **Rate Limiting**: API routes are protected with rate limiting
+
+### Local vs Production Authentication
+
+- Local development uses Auth0 development credentials
+- Production uses separate Auth0 application settings
+- Netlify deployment requires additional environment variable configuration
 
 ## License
 MIT 

@@ -1,28 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth0 } from '../utils/authService';
 
 function Login() {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
 
-  // Redirect to Auth0 login
-  const handleLogin = () => {
-    window.location.href = '/api/auth/login';
-  };
-
-  // For demo purposes, we also offer a mock login option
-  const handleMockLogin = (role) => {
-    // Store auth info in localStorage (for demo only)
-    localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('user', role === 'admin' ? 'Admin User' : 'Teacher User');
-    localStorage.setItem('userRole', role);
-
-    // Redirect based on role
-    if (role === 'admin') {
-      navigate('/admin');
-    } else {
+  // If user is already authenticated, redirect to dashboard
+  useEffect(() => {
+    if (isAuthenticated) {
       navigate('/dashboard');
     }
+  }, [isAuthenticated, navigate]);
+
+  // Handle Auth0 login
+  const handleLogin = () => {
+    loginWithRedirect();
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-indigo-600" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -47,39 +51,12 @@ function Login() {
               </button>
             </div>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  Or use demo login
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <button
-                onClick={() => handleMockLogin('teacher')}
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Sign in as Teacher
-              </button>
-
-              <button
-                onClick={() => handleMockLogin('admin')}
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Sign in as Administrator
-              </button>
-            </div>
-
             <div className="mt-4 text-sm text-center">
               <p className="text-gray-600">
-                For demo purposes, you can use the buttons above to access different roles.
+                Secure authentication powered by Auth0
               </p>
               <p className="text-gray-600 mt-2">
-                To use Auth0 authentication, you need to configure your Auth0 credentials in the .env.local file.
+                Roles and permissions are managed through Auth0
               </p>
             </div>
           </div>

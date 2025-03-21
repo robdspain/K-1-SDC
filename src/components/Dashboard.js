@@ -3,6 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import DrdpAssessment from './DrdpAssessment';
 import DrdpDataVisualization from './DrdpDataVisualization';
 import { Nav, Button } from 'react-bootstrap';
+import LearningTargetsGenerator from './LearningTargetsGenerator';
+import LearningPlanList from './LearningPlanList';
+import dbService from '../utils/dbService';
+import { useAuth0 } from '../utils/authService';
 
 // Mock database service - in a real app, this would connect to your actual database
 const dbService = {
@@ -46,7 +50,8 @@ const dbService = {
 
 function Dashboard() {
   const navigate = useNavigate();
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const { user, isAuthenticated, isLoading, logout, getUserRole } = useAuth0();
+  const userRole = getUserRole();
   const [activeTab, setActiveTab] = useState('students');
   const [students, setStudents] = useState([]);
   const [newStudent, setNewStudent] = useState({
@@ -59,8 +64,10 @@ function Dashboard() {
   const [assessments, setAssessments] = useState([]);
   const [isAssessing, setIsAssessing] = useState(false);
   const [assessmentView, setAssessmentView] = useState('preschool');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showLearningTargetsModal, setShowLearningTargetsModal] = useState(false);
+  const [selectedAssessment, setSelectedAssessment] = useState(null);
+  const [learningPlanRefresh, setLearningPlanRefresh] = useState(0);
 
   // Demo data for DRDP measures
   const drdpMeasures = [
@@ -233,21 +240,32 @@ function Dashboard() {
 
   // Update the handleLogout function
   const handleLogout = () => {
-    // Clear local storage auth data (for mock auth)
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('user');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userId');
+    logout();
+  };
 
-    // Check if using Auth0
-    const useAuth0 = process.env.NEXT_PUBLIC_USE_AUTH0 === 'true';
+  const handleGenerateLearningTargets = (assessment) => {
+    setSelectedAssessment(assessment);
+    setShowLearningTargetsModal(true);
+  };
 
-    if (useAuth0) {
-      // Redirect to Auth0 logout
-      window.location.href = '/api/auth/logout';
-    } else {
-      // Redirect to home for mock auth
-      window.location.href = '/';
+  const handleSaveLearningPlan = async (learningPlan) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await dbService.saveLearningPlan(learningPlan);
+
+      if (response.success) {
+        // Trigger refresh of learning plans
+        setLearningPlanRefresh(prev => prev + 1);
+      } else {
+        throw new Error("Failed to save learning plan");
+      }
+    } catch (err) {
+      console.error("Error saving learning plan:", err);
+      setError("Failed to save learning plan data. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -293,6 +311,11 @@ function Dashboard() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </button>
+                  {user && (
+                    <span className="text-white text-sm ml-2">
+                      {user.name}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -526,6 +549,12 @@ function Dashboard() {
                                         {assessment.measures?.length || 0} measures
                                       </td>
                                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button
+                                          onClick={() => handleGenerateLearningTargets(assessment)}
+                                          className="text-indigo-600 hover:text-indigo-900 mr-4"
+                                        >
+                                          Generate Learning Targets
+                                        </button>
                                         <a href="#" className="text-indigo-600 hover:text-indigo-900">View</a>
                                       </td>
                                     </tr>
@@ -536,6 +565,25 @@ function Dashboard() {
                           </div>
                         </div>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Add Learning Plans section after Recent Assessments Table */}
+                  <div className="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
+                    <div className="px-4 py-5 border-b border-gray-200 sm:px-6">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900">Learning Plans & IEP Goals</h3>
+                    </div>
+                    <div className="px-4 py-5 sm:p-6">
+                      {selectedStudent ? (
+                        <LearningPlanList
+                          studentId={selectedStudent.id}
+                          refreshTrigger={learningPlanRefresh}
+                        />
+                      ) : (
+                        <div className="text-center py-4 text-gray-500">
+                          Select a student to view their learning plans and IEP goals
+                        </div>
+                      )}
                     </div>
                   </div>
                 </>
@@ -584,6 +632,14 @@ function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Add the Learning Targets Generator Modal */}
+      <LearningTargetsGenerator
+        show={showLearningTargetsModal}
+        onHide={() => setShowLearningTargetsModal(false)}
+        assessment={selectedAssessment}
+        onSave={handleSaveLearningPlan}
+      />
     </div>
   );
 }

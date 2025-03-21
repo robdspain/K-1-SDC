@@ -1,6 +1,6 @@
 [build]
-  command = "npm run build"
-  publish = ".next"
+  command = "CI= npm run build"
+  publish = "build"
   environment = { NODE_VERSION = "18", NPM_VERSION = "10", NEXT_PUBLIC_SUPABASE_URL = "your-supabase-url" }
 
 [build.environment]
@@ -9,7 +9,13 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Needed for client-side routing
+# Handle API routes for Auth0
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Handle client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
