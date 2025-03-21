@@ -1,6 +1,5 @@
-import { handleAuth } from '@auth0/nextjs-auth0/edge';
+import { handleAuth, getSession } from '@auth0/nextjs-auth0/edge';
 import { syncAuth0UserToSupabase } from '@/utils/auth0-sync';
-import { getSession } from '@auth0/nextjs-auth0';
 
 // Standard Auth0 routes handler for Next.js App Router
 export const GET = handleAuth();

@@ -6,7 +6,8 @@ import { syncAuth0UserToSupabase } from '@/utils/auth0-sync';
 export async function GET(req: NextRequest) {
     try {
         // Get Auth0 session using the request
-        const session = await getSession(req);
+        const res = NextResponse.next();
+        const session = await getSession(req, res);
 
         if (!session || !session.user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
