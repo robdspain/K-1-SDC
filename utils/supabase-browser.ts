@@ -10,13 +10,68 @@ export function createClient() {
 
     // Return mock client if in production (build) environment
     if (process.env.NODE_ENV === 'production') {
-      return {
+      // Create a mock client with both auth and database methods
+      const mockClient = {
         auth: {
           getUser: async () => ({ data: { user: null }, error: null }),
           signInWithPassword: async () => ({ data: null, error: new Error('Supabase configuration missing') }),
           signUp: async () => ({ data: null, error: new Error('Supabase configuration missing') })
+        },
+        from: (table: string) => {
+          return {
+            select: (columns: string) => {
+              return {
+                eq: (column: string, value: any) => {
+                  return {
+                    single: async () => ({
+                      data: null,
+                      error: new Error('Supabase configuration missing')
+                    }),
+                    limit: (limit: number) => ({
+                      single: async () => ({
+                        data: null,
+                        error: new Error('Supabase configuration missing')
+                      })
+                    })
+                  };
+                },
+                limit: (limit: number) => ({
+                  single: async () => ({
+                    data: null,
+                    error: new Error('Supabase configuration missing')
+                  })
+                })
+              };
+            },
+            insert: (data: any) => ({
+              select: (columns: string) => ({
+                single: async () => ({
+                  data: null,
+                  error: new Error('Supabase configuration missing')
+                })
+              })
+            }),
+            update: (data: any) => ({
+              eq: (column: string, value: any) => ({
+                single: async () => ({
+                  data: null,
+                  error: new Error('Supabase configuration missing')
+                })
+              })
+            }),
+            delete: () => ({
+              eq: (column: string, value: any) => ({
+                single: async () => ({
+                  data: null,
+                  error: new Error('Supabase configuration missing')
+                })
+              })
+            })
+          };
         }
       };
+
+      return mockClient;
     }
   }
 
