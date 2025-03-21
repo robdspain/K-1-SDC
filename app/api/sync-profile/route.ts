@@ -2,6 +2,9 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getSession } from '@auth0/nextjs-auth0/edge';
 import { syncAuth0UserToSupabase } from '@/utils/auth0-sync';
 
+// Mark route as dynamic to prevent static generation
+export const dynamic = 'force-dynamic';
+
 // API route to sync Auth0 user to Supabase
 export async function GET(req: NextRequest) {
     try {
