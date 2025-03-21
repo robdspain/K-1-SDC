@@ -46,17 +46,17 @@ Follow these steps to configure your Auth0 application for both local developmen
 
    **Allowed Callback URLs:**
    ```
-   https://[your-netlify-site].netlify.app/.netlify/functions/auth/callback
+   https://k-1-sdc-assessment.netlify.app/.netlify/functions/auth/callback
    ```
 
    **Allowed Logout URLs:**
    ```
-   https://[your-netlify-site].netlify.app
+   https://k-1-sdc-assessment.netlify.app
    ```
 
    **Allowed Web Origins:**
    ```
-   https://[your-netlify-site].netlify.app
+   https://k-1-sdc-assessment.netlify.app
    ```
 
 2. **Set Up Environment Variables in Netlify**
@@ -70,6 +70,8 @@ Follow these steps to configure your Auth0 application for both local developmen
    NETLIFY_AUTH0_CLIENT_SECRET=your-auth0-client-secret
    NETLIFY_AUTH0_CALLBACK=https://[your-netlify-site].netlify.app/.netlify/functions/auth/callback
    NETLIFY_AUTH0_AFTER_LOGOUT_URL=https://[your-netlify-site].netlify.app
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
    ```
 
 ## Optional: Configure Roles and Permissions
