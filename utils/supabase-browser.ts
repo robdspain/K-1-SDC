@@ -20,61 +20,69 @@ export function createClient() {
         from: (table: string) => {
           return {
             select: (columns: string) => {
-              const queryBuilder = {
+              // Create a base result to return when awaited
+              const baseResult = { data: null, error: new Error('Supabase configuration missing') };
+
+              // Create a query builder that is also awaitable (thenable)
+              const queryBuilder: any = {
                 eq: (column: string, value: any) => {
                   return {
-                    single: async () => ({
-                      data: null,
-                      error: new Error('Supabase configuration missing')
-                    }),
+                    single: async () => baseResult,
                     limit: (limit: number) => ({
-                      single: async () => ({
-                        data: null,
-                        error: new Error('Supabase configuration missing')
-                      })
-                    })
+                      single: async () => baseResult
+                    }),
+                    // Make this level awaitable too
+                    then: (onfulfilled: any) => Promise.resolve(baseResult).then(onfulfilled)
                   };
                 },
                 limit: (limit: number) => ({
-                  single: async () => ({
-                    data: null,
-                    error: new Error('Supabase configuration missing')
-                  })
+                  single: async () => baseResult,
+                  // Make this level awaitable too
+                  then: (onfulfilled: any) => Promise.resolve(baseResult).then(onfulfilled)
                 }),
                 order: (column: string, options?: { ascending?: boolean }) => {
                   return queryBuilder;
                 },
-                single: async () => ({
-                  data: null,
-                  error: new Error('Supabase configuration missing')
-                })
+                single: async () => baseResult,
+                // Make the query builder awaitable
+                then: (onfulfilled: any) => Promise.resolve(baseResult).then(onfulfilled)
               };
+
               return queryBuilder;
             },
-            insert: (data: any) => ({
-              select: (columns: string) => ({
-                single: async () => ({
-                  data: null,
-                  error: new Error('Supabase configuration missing')
-                })
-              })
-            }),
-            update: (data: any) => ({
-              eq: (column: string, value: any) => ({
-                single: async () => ({
-                  data: null,
-                  error: new Error('Supabase configuration missing')
-                })
-              })
-            }),
-            delete: () => ({
-              eq: (column: string, value: any) => ({
-                single: async () => ({
-                  data: null,
-                  error: new Error('Supabase configuration missing')
-                })
-              })
-            })
+            insert: (data: any) => {
+              const baseResult = { data: null, error: new Error('Supabase configuration missing') };
+              const insertBuilder: any = {
+                select: (columns: string) => ({
+                  single: async () => baseResult,
+                  then: (onfulfilled: any) => Promise.resolve(baseResult).then(onfulfilled)
+                }),
+                then: (onfulfilled: any) => Promise.resolve(baseResult).then(onfulfilled)
+              };
+              return insertBuilder;
+            },
+            update: (data: any) => {
+              const baseResult = { data: null, error: new Error('Supabase configuration missing') };
+              const updateBuilder: any = {
+                eq: (column: string, value: any) => ({
+                  single: async () => baseResult,
+                  then: (onfulfilled: any) => Promise.resolve(baseResult).then(onfulfilled)
+                }),
+                then: (onfulfilled: any) => Promise.resolve(baseResult).then(onfulfilled)
+              };
+              return updateBuilder;
+            },
+            delete: () => {
+              const baseResult = { data: null, error: new Error('Supabase configuration missing') };
+              const deleteBuilder: any = {
+                eq: (column: string, value: any) => ({
+                  single: async () => baseResult,
+                  then: (onfulfilled: any) => Promise.resolve(baseResult).then(onfulfilled)
+                }),
+                then: (onfulfilled: any) => Promise.resolve(baseResult).then(onfulfilled)
+              };
+              return deleteBuilder;
+            }
           };
         }
       };
