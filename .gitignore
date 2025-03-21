@@ -10,6 +10,16 @@ node_modules/
 .env.test.local
 .env.production.local
 *.env
+Auth0-Configuration.md
+*-secrets.md
+*-keys.md
+*credentials*.md
+*credentials*.json
+*secrets*.json
+*secrets*.yaml
+*secrets*.yml
+create-k1-sdc-repo.sh
+push-to-github.sh
 
 # Build directories
 /build

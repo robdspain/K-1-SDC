@@ -70,8 +70,8 @@ Follow these steps to configure your Auth0 application for both local developmen
    NETLIFY_AUTH0_CLIENT_SECRET=your-auth0-client-secret
    NETLIFY_AUTH0_CALLBACK=https://[your-netlify-site].netlify.app/.netlify/functions/auth/callback
    NETLIFY_AUTH0_AFTER_LOGOUT_URL=https://[your-netlify-site].netlify.app
-   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   NEXT_PUBLIC_SUPABASE_URL=https://npyrumupbledqaiahvso.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5weXJ1bXVwYmxlZHFhaWFodnNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI1MDMzNTcsImV4cCI6MjA1ODA3OTM1N30.o4FrtgK6m-lLot39VCL0h7Cgh1o3lsH_gecklBM6oNI
    ```
 
 ## Optional: Configure Roles and Permissions
