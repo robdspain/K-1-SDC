@@ -1,0 +1,30 @@
+[build]
+  command = "CI= npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "10"
+  NEXT_TELEMETRY_DISABLED = "1"
+  SECRETS_SCAN_OMIT_PATHS = ".env.production,.netlify/**/*.env.production,Auth0-Configuration.md"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Handle API routes for Auth0
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Handle Next.js API and paths
+[[redirects]]
+  from = "/_next/static/*"
+  to = "/_next/static/:splat"
+  status = 200
+
+# Handle all other routes
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/nextjs-server"
+  status = 200 
